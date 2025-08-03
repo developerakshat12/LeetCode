@@ -3,31 +3,52 @@ public:
     vector<int> findAnagrams(string s, string p) {
         if (s.size() < p.size()) return {};
 
-        unordered_map<char, int> pMap, sMap;
+        vector<int> pFreq(26, 0), sFreq(26, 0);
         vector<int> result;
 
-        // Fill frequency map for string p
-        for (char c : p) {
-            pMap[c]++;
+        for (char c : p) pFreq[c - 'a']++;
+
+        int matchCount = 0;
+        int windowSize = p.size();
+
+        // Build the initial window
+        for (int i = 0; i < windowSize; i++) {
+            char c = s[i];
+            sFreq[c - 'a']++;
         }
 
-        int k = p.size();
-
-        // Fill the first window
-        for (int i = 0; i < k; ++i) {
-            sMap[s[i]]++;
+        // Count initial matches
+        for (int i = 0; i < 26; i++) {
+            if (pFreq[i] == sFreq[i]) matchCount++;
         }
-
-        if (sMap == pMap) result.push_back(0); // First window match
 
         // Slide the window
-        for (int i = k; i < s.size(); ++i) {
-            sMap[s[i]]++;             // include new char
-            sMap[s[i - k]]--;         // exclude old char
-            if (sMap[s[i - k]] == 0)  // clean up zero counts
-                sMap.erase(s[i - k]);
+        for (int i = windowSize; i < s.size(); i++) {
+            if (matchCount == 26) result.push_back(i - windowSize);
 
-            if (sMap == pMap) result.push_back(i - k + 1);
+            int rightChar = s[i] - 'a';
+            int leftChar = s[i - windowSize] - 'a';
+
+            // Add right character
+            sFreq[rightChar]++;
+            if (sFreq[rightChar] == pFreq[rightChar]) {
+                matchCount++;
+            } else if (sFreq[rightChar] == pFreq[rightChar] + 1) {
+                matchCount--;
+            }
+
+            // Remove left character
+            sFreq[leftChar]--;
+            if (sFreq[leftChar] == pFreq[leftChar]) {
+                matchCount++;
+            } else if (sFreq[leftChar] == pFreq[leftChar] - 1) {
+                matchCount--;
+            }
+        }
+
+        // Final check for the last window
+        if (matchCount == 26) {
+            result.push_back(s.size() - windowSize);
         }
 
         return result;
