@@ -24,20 +24,36 @@ public:
 
 
         // lol we can just create vec positive and vec negative and combine them to form the answer 
-        vector<int> pos (n/2);
-        vector<int> neg (n/2);
-        int positive_pos = 0;
-        int negative_pos = 0;
-        for(int i = 0; i < n ; i++){
-            if(nums[i] > 0) pos[positive_pos++] = nums[i];
-            else neg[negative_pos++] = nums[i];
-        }
+        // vector<int> pos (n/2);
+        // vector<int> neg (n/2);
+        // int positive_pos = 0;
+        // int negative_pos = 0;
+        // for(int i = 0; i < n ; i++){
+        //     if(nums[i] > 0) pos[positive_pos++] = nums[i];
+        //     else neg[negative_pos++] = nums[i];
+        // }
 
-        for(int j = 0; j < n; j++){
-            if(j%2 == 0) ans[j] = pos[j/2];
-            else ans[j] = neg[j/2];
-        }
+        // for(int j = 0; j < n; j++){
+        //     if(j%2 == 0) ans[j] = pos[j/2];
+        //     else ans[j] = neg[j/2];
+        // }
 
+        // return ans;
+
+        //let's optimize it more 
+        //we can combine both the steps into one
+        int pos = 0;
+        int neg = 1;
+        for(int read = 0; read < n; read++){
+            if(nums[read] > 0) {
+                ans[pos] = nums[read];
+                pos += 2;
+            }
+            else {
+                ans[neg] = nums[read];
+                neg += 2;
+            }
+        }
         return ans;
     }
 };
